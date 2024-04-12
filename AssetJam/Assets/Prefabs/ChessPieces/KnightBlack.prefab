@@ -101,7 +101,7 @@ MonoBehaviour:
   color: 1
   boardManager: {fileID: 0}
   pos: {x: 0, y: 0}
-  type: 2
+  type: 3
   activate: 0
 --- !u!135 &-1754355528651711000
 SphereCollider:

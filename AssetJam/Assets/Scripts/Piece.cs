@@ -36,6 +36,7 @@ public class Piece : MonoBehaviour, IPointerClickHandler
         }
         boardManager.currentPiece = this;
         boardManager.ResetBoard();
+        activate = true;
         OutlineSquares();
     }
 

@@ -98,8 +98,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a85237a9629d453babd37cffb29aa7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  color: 0
   boardManager: {fileID: 0}
-  type: 2
+  pos: {x: 0, y: 0}
+  type: 3
+  activate: 0
 --- !u!135 &-7330399346928033017
 SphereCollider:
   m_ObjectHideFlags: 0

@@ -17,6 +17,7 @@ public class Card : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, I
     public void OnPointerClick(PointerEventData eventData)
     {
         manager.currentPlayer.usedCard = this;
+        manager.currentPiece = null;
         if (manager.currentPlayer.usedCard == this && doubleClick)
         {
             manager.currentPlayer.currentCards.Remove(manager.currentPlayer.usedCard);
@@ -45,6 +46,7 @@ public class Card : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, I
     {
         if (manager.currentPlayer.usedCard)
             return;
+        manager.currentPiece = null;
         pieces = manager.GetPieces(type, color);
         foreach (Piece piece in pieces)
         {
