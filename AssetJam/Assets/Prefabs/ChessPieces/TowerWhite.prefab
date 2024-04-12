@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2471275768156461107}
   - component: {fileID: 6068744408918682953}
   - component: {fileID: -2023318319309474103}
+  - component: {fileID: 7006597841620091567}
   m_Layer: 0
   m_Name: TowerWhite
   m_TagString: Untagged
@@ -122,4 +123,20 @@ SphereCollider:
   m_Enabled: 1
   serializedVersion: 3
   m_Radius: 0.1
-  m_Center: {x: 0.08, y: -0.08, z: 0}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!111 &7006597841620091567
+Animation:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7491122309071020229}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Animation: {fileID: 7400000, guid: 09ea904ba0fce4251b70eb33229c2570, type: 2}
+  m_Animations:
+  - {fileID: 7400000, guid: 09ea904ba0fce4251b70eb33229c2570, type: 2}
+  m_WrapMode: 0
+  m_PlayAutomatically: 0
+  m_AnimatePhysics: 0
+  m_CullingType: 0

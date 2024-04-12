@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -10,38 +12,55 @@ public class Card : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, I
 
     public ChessBoardManager manager;
 
-    private List<Piece> pieces;
+    public List<Piece> pieces;
     private bool doubleClick;
+    private SphereCollider _collider;
 
+    private void Awake()
+    {
+        _collider = GetComponent<SphereCollider>();
+    }
 
     public void OnPointerClick(PointerEventData eventData)
     {
+        if (manager.currentPlayer.usedCard == this)
+        {
+            StartCoroutine(HideCard(this));
+            return;
+        }
         manager.currentPlayer.usedCard = this;
         manager.currentPiece = null;
-        if (manager.currentPlayer.usedCard == this && doubleClick)
-        {
-            manager.currentPlayer.currentCards.Remove(manager.currentPlayer.usedCard);
-            Destroy(manager.currentPlayer.usedCard.gameObject);
-            manager.deck.GetCard(manager.currentPlayer);
-            manager.deck.DisplayCards(manager.currentPlayer);
-            manager.currentPiece = null;
-            
-        }
         if (pieces.Count == 1)
         {
             manager.currentPiece = pieces[0];
         }
-
-        StartCoroutine(WaitDoubleClick());
     }
 
-    private IEnumerator WaitDoubleClick()
+    public void EnableCard()
     {
-        doubleClick = true;
-        yield return new WaitForSeconds(0.5f);
-        doubleClick = false;
+        _collider.enabled = true;
     }
 
+    public void DisableCard()
+    {
+        _collider.enabled = false;
+    }
+    
+    public IEnumerator HideCard(Card card)
+    {
+        DisableCard();
+        float posApply = 0f;
+        while (Vector3.Distance(card.transform.position, manager.deck.transform.position) > 0.1f)
+        {
+            card.transform.position = Vector3.Lerp(card.transform.position, manager.deck.transform.position, posApply);
+            card.transform.localRotation = Quaternion.Euler(Vector3.Slerp(card.transform.localRotation.eulerAngles, new Vector3(0, 0, 90), posApply));
+            posApply += Time.deltaTime;
+            yield return null;
+        }
+        manager.currentPiece = null;
+        manager.SwitchPlayer();
+    }
+    
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (manager.currentPlayer.usedCard)

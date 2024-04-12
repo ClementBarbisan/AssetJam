@@ -107,22 +107,22 @@ public class ChessBoardManager : MonoBehaviour
                     chessBoard[i, j].piece.boardManager = this;
                     chessBoard[i, j].piece.pos = new Vector2Int(i, j);
                 }
-                else if (j == 1)
-                {
-                    chessBoard[i, j].piece =
-                        Instantiate(_pawnWhite, chessBoard[i, j].transform.position -chessBoard[i, j].transform.forward / 10, Quaternion.identity, 
-                            chessBoard[i, j].transform).GetComponent<Piece>();
-                    chessBoard[i, j].piece.boardManager = this;
-                    chessBoard[i, j].piece.pos = new Vector2Int(i, j);
-                }
-                else if (j == sizeChess - 2)
-                {
-                    chessBoard[i, j].piece =
-                        Instantiate(_pawnBlack, chessBoard[i, j].transform.position -chessBoard[i, j].transform.forward / 10, Quaternion.identity, 
-                            chessBoard[i, j].transform).GetComponent<Piece>();
-                    chessBoard[i, j].piece.boardManager = this;
-                    chessBoard[i, j].piece.pos = new Vector2Int(i, j);
-                }
+                // else if (j == 1)
+                // {
+                //     chessBoard[i, j].piece =
+                //         Instantiate(_pawnWhite, chessBoard[i, j].transform.position -chessBoard[i, j].transform.forward / 10, Quaternion.identity, 
+                //             chessBoard[i, j].transform).GetComponent<Piece>();
+                //     chessBoard[i, j].piece.boardManager = this;
+                //     chessBoard[i, j].piece.pos = new Vector2Int(i, j);
+                // }
+                // else if (j == sizeChess - 2)
+                // {
+                //     chessBoard[i, j].piece =
+                //         Instantiate(_pawnBlack, chessBoard[i, j].transform.position -chessBoard[i, j].transform.forward / 10, Quaternion.identity, 
+                //             chessBoard[i, j].transform).GetComponent<Piece>();
+                //     chessBoard[i, j].piece.boardManager = this;
+                //     chessBoard[i, j].piece.pos = new Vector2Int(i, j);
+                // }
                 else if (j == sizeChess - 1)
                 {
                     if (i == 0 || i == sizeChess - 1)
@@ -181,22 +181,20 @@ public class ChessBoardManager : MonoBehaviour
     
     public void SwitchPlayer()
     {
+        ResetBoard();
         currentPlayer.currentCards.Remove(currentPlayer.usedCard);
         Destroy(currentPlayer.usedCard.gameObject);
         currentPlayer.usedCard = null;
+        deck.GetCard(currentPlayer);
         deck.HideCards(currentPlayer);
         if (currentPlayer == playerOne)
         {
-            Debug.Log("TestOne");
             currentPlayer = playerTwo;
         }
         else
         {
-            Debug.Log("TestTwo");
             currentPlayer = playerOne;
         }
-        deck.GetCard(currentPlayer);
-        deck.DisplayCards(currentPlayer);
     }
 
     public List<Piece> GetPieces(Piece.PieceType type, Piece.ColorPiece color)

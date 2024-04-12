@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7631268843676939527}
   - component: {fileID: 7484873482129714192}
   - component: {fileID: -8394618243123314174}
+  - component: {fileID: -2348772080969556441}
   m_Layer: 0
   m_Name: PawnBlack
   m_TagString: Untagged
@@ -102,7 +103,6 @@ MonoBehaviour:
   boardManager: {fileID: 0}
   pos: {x: 0, y: 0}
   type: 0
-  activate: 0
 --- !u!135 &-8394618243123314174
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -123,4 +123,20 @@ SphereCollider:
   m_Enabled: 1
   serializedVersion: 3
   m_Radius: 0.1
-  m_Center: {x: 0.08, y: -0.08, z: 0}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!111 &-2348772080969556441
+Animation:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6892092964902871717}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Animation: {fileID: 7400000, guid: 09ea904ba0fce4251b70eb33229c2570, type: 2}
+  m_Animations:
+  - {fileID: 7400000, guid: 09ea904ba0fce4251b70eb33229c2570, type: 2}
+  m_WrapMode: 0
+  m_PlayAutomatically: 0
+  m_AnimatePhysics: 0
+  m_CullingType: 0

@@ -25,8 +25,36 @@ public class Piece : MonoBehaviour, IPointerClickHandler
     public ChessBoardManager boardManager;
     public Vector2Int pos;
     public PieceType type;
+    private bool _activate;
+    public bool activate
+    {
+        get
+        {
+            return _activate;
+        }
+        set
+        {
+            _activate = value;
+            if (_activate)
+            {
+                anim.Play("RotPiece");
+                anim["RotPiece"].speed = 1;
+            }
+            else
+            {
+                anim["RotPiece"].normalizedTime = 0;
+                anim["RotPiece"].speed = 0;
+            }
+        }
+    }
 
-    public bool activate;
+    private bool ping;
+    private Animation anim;
+   
+    private void Start()
+    {
+        anim = GetComponent<Animation>();
+    }
 
     public void OnPointerClick(PointerEventData eventData)
     {
@@ -95,7 +123,7 @@ public class Piece : MonoBehaviour, IPointerClickHandler
             }
             else
             {
-                if (CheckPosInsideBoard(pos.x, pos.y - 1) && !CheckPiecePresent(pos.x, pos.y - 1) && boardManager.chessBoard[pos.x, pos.y - 1].piece == null)
+                if (CheckPosInsideBoard(pos.x, pos.y - 1) && !CheckPiecePresent(pos.x, pos.y - 1))
                 {
                     boardManager.chessBoard[pos.x, pos.y - 1].SetPossiblePos();
                 }
@@ -127,7 +155,7 @@ public class Piece : MonoBehaviour, IPointerClickHandler
             }
             else
             {
-                if (CheckPosInsideBoard(pos.x, pos.y + 1) && !CheckPiecePresent(pos.x, pos.y + 1) && boardManager.chessBoard[pos.x, pos.y + 1].piece == null)
+                if (CheckPosInsideBoard(pos.x, pos.y + 1) && !CheckPiecePresent(pos.x, pos.y + 1))
                 {
                     boardManager.chessBoard[pos.x, pos.y + 1].SetPossiblePos();
                 }
@@ -194,26 +222,34 @@ public class Piece : MonoBehaviour, IPointerClickHandler
 
     private void TowerCheck()
     {
-        for (int x = pos.x; x >= 0 && boardManager.chessBoard[x, pos.y].piece == null; x--)
+        for (int x = pos.x; x >= 0 && (boardManager.chessBoard[x, pos.y].piece == null || x == pos.x); x--)
         {
-            if (CheckPiecePresent(x, pos.y))
+            if (x == pos.x)
+                continue;
+            if (CheckPiecePresent(x, pos.y) && x != pos.x)
                 break;
             boardManager.chessBoard[x, pos.y].SetPossiblePos();
         }
-        for (int x = pos.x; x < boardManager.sizeChess && boardManager.chessBoard[x, pos.y].piece == null; x++)
+        for (int x = pos.x; x < boardManager.sizeChess && (boardManager.chessBoard[x, pos.y].piece == null || x == pos.x); x++)
         {
-            if (CheckPiecePresent(x, pos.y))
+            if (x == pos.x)
+                continue;
+            if (CheckPiecePresent(x, pos.y) && x != pos.x)
                 break;
             boardManager.chessBoard[x, pos.y].SetPossiblePos();
         }
-        for (int y = pos.y; y >= 0 && boardManager.chessBoard[pos.x, y].piece == null; y--)
+        for (int y = pos.y; y >= 0 && (boardManager.chessBoard[pos.x, y].piece == null || y == pos.y); y--)
         {
+            if (y == pos.y)
+                continue;
             if (CheckPiecePresent(pos.x, y))
                 break;
             boardManager.chessBoard[pos.x, y].SetPossiblePos();
         }
-        for (int y = pos.y; y < boardManager.sizeChess && boardManager.chessBoard[pos.x, y].piece == null; y++)
+        for (int y = pos.y; y < boardManager.sizeChess && (boardManager.chessBoard[pos.x, y].piece == null || y == pos.y); y++)
         {
+            if (y == pos.y)
+                continue;
             if (CheckPiecePresent(pos.x, y))
                 break;
             boardManager.chessBoard[pos.x, y].SetPossiblePos();
@@ -224,7 +260,7 @@ public class Piece : MonoBehaviour, IPointerClickHandler
     {
         int x = pos.x;
         int y = pos.y;
-        while (x >= 0 && y >= 0 && boardManager.chessBoard[x, y].piece == null)
+        while (x >= 0 && y >= 0 && (boardManager.chessBoard[x, y].piece == null || (x == pos.x && y == pos.y)))
         {
             x--;
             y--;
@@ -234,11 +270,31 @@ public class Piece : MonoBehaviour, IPointerClickHandler
         }
         x = pos.x;
         y = pos.y;
-        while (x < boardManager.sizeChess && y < boardManager.sizeChess && boardManager.chessBoard[x, y].piece == null)
+        while (x < boardManager.sizeChess && y < boardManager.sizeChess && (boardManager.chessBoard[x, y].piece == null || (x == pos.x && y == pos.y)))
         {
             x++;
             y++;
             if (x >= boardManager.sizeChess || y >= boardManager.sizeChess || CheckPiecePresent(x, y))
+                break;
+            boardManager.chessBoard[x, y].SetPossiblePos();
+        }
+        x = pos.x;
+        y = pos.y;
+        while (x < boardManager.sizeChess && y >= 0 && (boardManager.chessBoard[x, y].piece == null || (x == pos.x && y == pos.y)))
+        {
+            x++;
+            y--;
+            if (x >= boardManager.sizeChess || y < 0 || CheckPiecePresent(x, y))
+                break;
+            boardManager.chessBoard[x, y].SetPossiblePos();
+        }
+        x = pos.x;
+        y = pos.y;
+        while (x >= 0 && y < boardManager.sizeChess && (boardManager.chessBoard[x, y].piece == null || (x == pos.x && y == pos.y)))
+        {
+            x--;
+            y++;
+            if (x < 0 || y >= boardManager.sizeChess || CheckPiecePresent(x, y))
                 break;
             boardManager.chessBoard[x, y].SetPossiblePos();
         }

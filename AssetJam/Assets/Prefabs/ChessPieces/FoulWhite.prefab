@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 9102066011507545206}
   - component: {fileID: -2269760144874132775}
   - component: {fileID: -6294971293844353336}
+  - component: {fileID: 4407364928495798425}
   m_Layer: 0
   m_Name: FoulWhite
   m_TagString: Untagged
@@ -98,7 +99,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a85237a9629d453babd37cffb29aa7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  color: 0
   boardManager: {fileID: 0}
+  pos: {x: 0, y: 0}
   type: 1
 --- !u!135 &-6294971293844353336
 SphereCollider:
@@ -120,4 +123,20 @@ SphereCollider:
   m_Enabled: 1
   serializedVersion: 3
   m_Radius: 0.1
-  m_Center: {x: 0.08, y: -0.08, z: 0}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!111 &4407364928495798425
+Animation:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2825742733174715914}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Animation: {fileID: 7400000, guid: 09ea904ba0fce4251b70eb33229c2570, type: 2}
+  m_Animations:
+  - {fileID: 7400000, guid: 09ea904ba0fce4251b70eb33229c2570, type: 2}
+  m_WrapMode: 0
+  m_PlayAutomatically: 0
+  m_AnimatePhysics: 0
+  m_CullingType: 0
