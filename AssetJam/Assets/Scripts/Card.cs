@@ -50,11 +50,13 @@ public class Card : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, I
     {
         DisableCard();
         float posApply = 0f;
-        while (Vector3.Distance(card.transform.position, manager.deck.transform.position) > 0.1f)
+        Vector3 startPos = card.transform.position;
+        Vector3 startRot = card.transform.localRotation.eulerAngles;
+        while (posApply < 1f)
         {
-            card.transform.position = Vector3.Lerp(card.transform.position, manager.deck.transform.position, posApply);
-            card.transform.localRotation = Quaternion.Euler(Vector3.Slerp(card.transform.localRotation.eulerAngles, new Vector3(0, 0, 90), posApply));
-            posApply += Time.deltaTime;
+            card.transform.position = Vector3.Lerp(startPos, manager.deck.transform.position, posApply);
+            card.transform.localRotation = Quaternion.Euler(Vector3.Slerp(startRot, new Vector3(0, 0, 90), posApply));
+            posApply += Time.deltaTime * manager.deck.speed;
             yield return null;
         }
         manager.currentPiece = null;

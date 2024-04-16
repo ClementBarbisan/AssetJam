@@ -4,6 +4,7 @@ using Unity.VisualScripting;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class Deck : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class Deck : MonoBehaviour
     [SerializeField] private ChessBoardManager manager;
     private float sizeCard;
     private List<Card> deck;
+    [FormerlySerializedAs("_speed")] [SerializeField] public float speed = 2;
 
     // Start is called before the first frame update
     void Awake()
@@ -72,6 +74,7 @@ public class Deck : MonoBehaviour
         float posApply = 0;
         Vector3[] pos = new Vector3[player.currentCards.Count];
         int index = 0;
+        Vector3 startRot = player.currentCards[0].transform.rotation.eulerAngles;
         foreach (Card card in player.currentCards)
         {
             pos[index] = card.transform.position;
@@ -79,16 +82,16 @@ public class Deck : MonoBehaviour
             index++;
         }
         yield return new WaitForEndOfFrame();
-        while (Vector3.Distance(transform.position,  player.currentCards[0].transform.position) > 0.1f)
+        while (posApply < 1f)
         {
             index = 0;
             foreach (Card card in player.currentCards)
             {
                 card.transform.position = Vector3.Lerp(pos[index], transform.position, posApply);
-                card.transform.localRotation = Quaternion.Euler(Vector3.Lerp(card.transform.localRotation.eulerAngles, new Vector3(0, 0, 90), posApply));
+                card.transform.localRotation = Quaternion.Euler(Vector3.Lerp(startRot, new Vector3(0, 0, 90), posApply));
                 index++;
             }
-            posApply += Time.deltaTime;
+            posApply += Time.deltaTime * speed;
             yield return null;
         }
         foreach (Card card in player.currentCards)
@@ -112,27 +115,31 @@ public class Deck : MonoBehaviour
     {
         float posApply = 0;
         Vector3[] pos = new Vector3[currentPlayer.currentCards.Count];
+        Vector3[] startPos = new Vector3[currentPlayer.currentCards.Count];
         int index = 0;
+        Vector3 startRot = currentPlayer.currentCards[0].transform.rotation.eulerAngles;
         foreach (Card card in currentPlayer.currentCards)
         {
             pos[index] = currentPlayer.transform.position +
                          currentPlayer.transform.right * card.GetComponent<SpriteRenderer>().size.x * 2 *
-                         currentPlayer.currentCards.IndexOf(card);
+                         currentPlayer.currentCards.IndexOf(card) - currentPlayer.transform.right *
+                         card.GetComponent<SpriteRenderer>().size.x * 2 * (currentPlayer.currentCards.Count / 2);
+            startPos[index] = card.transform.position;
             index++;
         }
 
         yield return new WaitForEndOfFrame();
-        while (Vector3.Distance(currentPlayer.currentCards[0].transform.position, pos[0]) > 0.01f)
+        while (posApply < 1f)
         {
             index = 0;
             foreach (Card card in currentPlayer.currentCards)
             {
-                card.transform.position = Vector3.Lerp(card.transform.position, pos[index], posApply);
-                card.transform.localRotation = Quaternion.Euler(Vector3.Lerp(card.transform.localRotation.eulerAngles, new Vector3(0, 0, 0), posApply));
+                card.transform.position = Vector3.Lerp(startPos[index], pos[index], posApply);
+                card.transform.localRotation = Quaternion.Euler(Vector3.Lerp(startRot, new Vector3(0, 0, 0), posApply));
                 index++;
                 yield return null;
             }
-            posApply += Time.deltaTime;
+            posApply += Time.deltaTime * speed;
         }
 
         foreach (Card card in currentPlayer.currentCards)
