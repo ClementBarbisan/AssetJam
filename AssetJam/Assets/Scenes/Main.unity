@@ -1315,9 +1315,9 @@ MonoBehaviour:
   m_text: "This game is a 2 player game. Each player can play the two sides.\n\nAt
     the start of each turn, you can select a card which allow you to play a piece
     on the chessboard. \n\nPass over the cards to see which card allow to play which
-    pieces. After you selected a card you can select a piece to play then the position
+    piece. After you selected a card you can select a piece to play, then the position
     where the piece should go.\n\nIf you can't play any piece or don't want to play
-    this turn, you can double click on a card to discard a card and finish the turn.\n\nThe
+    this turn, you can double click on a card to discard it and finish your turn.\n\nThe
     game end when a king is taken or if there is no more card in the deck."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
