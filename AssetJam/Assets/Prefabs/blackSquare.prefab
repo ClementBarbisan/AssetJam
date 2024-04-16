@@ -99,7 +99,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   piece: {fileID: 0}
-  managerBoard: {fileID: 0}
   possiblePos: 0
   pos: {x: 0, y: 0}
   _possiblePosHint: {fileID: 6104182068505798508}

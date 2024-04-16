@@ -33,7 +33,7 @@ public class ShowHidePanel : MonoBehaviour
     {
         float posApply = 0;
         Vector3 posStart = transform.position;
-        while (posApply < 1f)
+        while (posApply <= 1.1f)
         {
             transform.position = Vector3.Lerp(posStart, _positionShow.position, posApply);
             posApply += Time.deltaTime * _speed;
@@ -46,7 +46,7 @@ public class ShowHidePanel : MonoBehaviour
     {
         float posApply = 0;
         Vector3 posStart = transform.position;
-        while (posApply < 1f)
+        while (posApply <= 1.1f)
         {
             transform.position = Vector3.Lerp(posStart, _positionHide.position, posApply);
             posApply += Time.deltaTime * _speed;

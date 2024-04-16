@@ -15,12 +15,12 @@ public class Player : MonoBehaviour
             if (_usedCard && value != null)
             {
                 _usedCard.transform.position -= _usedCard.transform.up / 10f;
-                _usedCard.manager.ResetBoard();
+                ChessBoardManager.Instance.ResetBoard();
                 foreach (Piece piece in _usedCard.pieces)
                 {
                     piece.activate = false;
                 }
-                value.pieces = value.manager.GetPieces(value.type, value.color);
+                value.pieces = ChessBoardManager.Instance.GetPieces(value.type, value.color);
                 foreach (Piece piece in value.pieces)
                 {
                     piece.activate = true;

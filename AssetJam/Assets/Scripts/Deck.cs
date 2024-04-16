@@ -1,8 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEditor;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -10,18 +11,14 @@ public class Deck : MonoBehaviour
 {
     [SerializeField] private List<Card> deckBase = new List<Card>();
     [SerializeField] private int nbDeck = 4;
-    [SerializeField] private ChessBoardManager manager;
     private float sizeCard;
-    private List<Card> deck;
+    public List<Card> deck;
     [FormerlySerializedAs("_speed")] [SerializeField] public float speed = 2;
 
+    [SerializeField] private TextMeshProUGUI _textNbCards;
     // Start is called before the first frame update
     void Awake()
     {
-        for (int i = 0; i < deckBase.Count; i++)
-        {
-            deckBase[i].manager = manager;
-        }
         deck = new List<Card>(deckBase.Count * nbDeck);
         for (int i = 0; i < nbDeck; i++)
         {
@@ -29,31 +26,38 @@ public class Deck : MonoBehaviour
         }
 
         deck.Shuffle();
-        for (int i = manager.playerOne.nbCards; i > 0; i--)
+        for (int i = ChessBoardManager.Instance.playerOne.nbCards; i > 0; i--)
         {
-            Card card = Instantiate(deck[0], transform.position, Quaternion.identity, manager.playerOne.transform);
+            Card card = Instantiate(deck[0], transform.position, Quaternion.identity, ChessBoardManager.Instance.playerOne.transform);
             card.transform.localScale *= 2;
             card.transform.localRotation = Quaternion.Euler(0, 0, 90);
-            manager.playerOne.currentCards.Add(card);
+            ChessBoardManager.Instance.playerOne.currentCards.Add(card);
             card.gameObject.SetActive(true);
             card.DisableCard();
             deck.RemoveAt(0);
         }
 
-        for (int i = manager.playerTwo.nbCards; i > 0; i--)
+        for (int i = ChessBoardManager.Instance.playerTwo.nbCards; i > 0; i--)
         {
-            Card card = Instantiate(deck[0], transform.position, Quaternion.identity, manager.playerTwo.transform);
+            Card card = Instantiate(deck[0], transform.position, Quaternion.identity, ChessBoardManager.Instance.playerTwo.transform);
             card.transform.localScale *= 2;
             card.transform.localRotation = Quaternion.Euler(0, 0, 90);
-            manager.playerTwo.currentCards.Add(card);
+            ChessBoardManager.Instance.playerTwo.currentCards.Add(card);
             card.gameObject.SetActive(false);
             card.DisableCard();
             deck.RemoveAt(0);
         }
+        _textNbCards.text = "Cards in deck : " + deck.Count;
     }
 
     public void GetCard(Player player)
     {
+        _textNbCards.text = "Cards in deck : " + deck.Count;
+        if (deck.Count == 0)
+        {
+            ChessBoardManager.Instance.EndGame();
+            return;
+        }
         while (player.currentCards.Count < player.nbCards)
         {
             Card card = Instantiate(deck[0], transform.position, Quaternion.identity, player.transform);
@@ -82,7 +86,7 @@ public class Deck : MonoBehaviour
             index++;
         }
         yield return new WaitForEndOfFrame();
-        while (posApply < 1f)
+        while (posApply <= 1.1f)
         {
             index = 0;
             foreach (Card card in player.currentCards)
@@ -98,7 +102,7 @@ public class Deck : MonoBehaviour
         {
             card.gameObject.SetActive(false);
         } 
-        DisplayCards(manager.currentPlayer);
+        DisplayCards(ChessBoardManager.Instance.currentPlayer);
     }
 
     public void DisplayCards(Player currentPlayer)
@@ -129,7 +133,7 @@ public class Deck : MonoBehaviour
         }
 
         yield return new WaitForEndOfFrame();
-        while (posApply < 1f)
+        while (posApply <= 1.1f)
         {
             index = 0;
             foreach (Card card in currentPlayer.currentCards)
@@ -137,9 +141,9 @@ public class Deck : MonoBehaviour
                 card.transform.position = Vector3.Lerp(startPos[index], pos[index], posApply);
                 card.transform.localRotation = Quaternion.Euler(Vector3.Lerp(startRot, new Vector3(0, 0, 0), posApply));
                 index++;
-                yield return null;
             }
             posApply += Time.deltaTime * speed;
+            yield return null;
         }
 
         foreach (Card card in currentPlayer.currentCards)

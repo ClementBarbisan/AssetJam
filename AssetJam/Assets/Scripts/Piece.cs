@@ -15,14 +15,13 @@ public class Piece : MonoBehaviour, IPointerClickHandler
     }
     public enum PieceType
     {
-        Pawn,
-        Foul,
-        Tower,
-        Knight,
-        Queen,
-        King
+        Pawn = 2,
+        Foul = 4,
+        Tower = 6,
+        Knight = 8,
+        Queen = 10,
+        King = 12
     }
-    public ChessBoardManager boardManager;
     public Vector2Int pos;
     public PieceType type;
     private bool _activate;
@@ -62,8 +61,8 @@ public class Piece : MonoBehaviour, IPointerClickHandler
         {
             return;
         }
-        boardManager.currentPiece = this;
-        boardManager.ResetBoard();
+        ChessBoardManager.Instance.currentPiece = this;
+        ChessBoardManager.Instance.ResetBoard();
         activate = true;
         OutlineSquares();
     }
@@ -97,10 +96,10 @@ public class Piece : MonoBehaviour, IPointerClickHandler
             {
                 for (int y = pos.y - 1; y < pos.y + 2; y++)
                 {
-                    if (x < 0 || y < 0 || x >= boardManager.sizeChess || y >= boardManager.sizeChess ||
+                    if (x < 0 || y < 0 || x >= ChessBoardManager.Instance.sizeChess || y >= ChessBoardManager.Instance.sizeChess ||
                         x == pos.x && y == pos.y || CheckPiecePresent(x, y))
                         continue;
-                    boardManager.chessBoard[x, y].SetPossiblePos();
+                    ChessBoardManager.Instance.chessBoard[x, y].SetPossiblePos();
                 }
             }
         }
@@ -110,14 +109,14 @@ public class Piece : MonoBehaviour, IPointerClickHandler
     {
         if (color == ColorPiece.Black)
         {
-            if (pos.y == boardManager.sizeChess - 2)
+            if (pos.y == ChessBoardManager.Instance.sizeChess - 2)
             {
-                if (!CheckPiecePresent(pos.x, pos.y - 1) && boardManager.chessBoard[pos.x, pos.y - 1].piece == null)
+                if (!CheckPiecePresent(pos.x, pos.y - 1) && ChessBoardManager.Instance.chessBoard[pos.x, pos.y - 1].piece == null)
                 {
-                    boardManager.chessBoard[pos.x, pos.y - 1].SetPossiblePos();
-                    if (!CheckPiecePresent(pos.x, pos.y - 2) && boardManager.chessBoard[pos.x, pos.y - 2].piece == null)
+                    ChessBoardManager.Instance.chessBoard[pos.x, pos.y - 1].SetPossiblePos();
+                    if (!CheckPiecePresent(pos.x, pos.y - 2) && ChessBoardManager.Instance.chessBoard[pos.x, pos.y - 2].piece == null)
                     {
-                        boardManager.chessBoard[pos.x, pos.y - 2].SetPossiblePos();
+                        ChessBoardManager.Instance.chessBoard[pos.x, pos.y - 2].SetPossiblePos();
                     }
                 }
             }
@@ -125,31 +124,31 @@ public class Piece : MonoBehaviour, IPointerClickHandler
             {
                 if (CheckPosInsideBoard(pos.x, pos.y - 1) && !CheckPiecePresent(pos.x, pos.y - 1))
                 {
-                    boardManager.chessBoard[pos.x, pos.y - 1].SetPossiblePos();
+                    ChessBoardManager.Instance.chessBoard[pos.x, pos.y - 1].SetPossiblePos();
                 }
                 
             }
-            if (CheckPosInsideBoard(pos.x + 1, pos.y - 1) && boardManager.chessBoard[pos.x + 1, pos.y - 1].piece &&
-                boardManager.chessBoard[pos.x + 1, pos.y - 1].piece.color != color)
+            if (CheckPosInsideBoard(pos.x + 1, pos.y - 1) && ChessBoardManager.Instance.chessBoard[pos.x + 1, pos.y - 1].piece &&
+                ChessBoardManager.Instance.chessBoard[pos.x + 1, pos.y - 1].piece.color != color)
             {
-                boardManager.chessBoard[pos.x + 1, pos.y - 1].SetPossiblePos();
+                ChessBoardManager.Instance.chessBoard[pos.x + 1, pos.y - 1].SetPossiblePos();
             }
-            if (CheckPosInsideBoard(pos.x - 1, pos.y - 1) && boardManager.chessBoard[pos.x - 1, pos.y - 1].piece &&
-                boardManager.chessBoard[pos.x - 1, pos.y - 1].piece.color != color)
+            if (CheckPosInsideBoard(pos.x - 1, pos.y - 1) && ChessBoardManager.Instance.chessBoard[pos.x - 1, pos.y - 1].piece &&
+                ChessBoardManager.Instance.chessBoard[pos.x - 1, pos.y - 1].piece.color != color)
             {
-                boardManager.chessBoard[pos.x - 1, pos.y - 1].SetPossiblePos();
+                ChessBoardManager.Instance.chessBoard[pos.x - 1, pos.y - 1].SetPossiblePos();
             }
         }
         else
         {
             if (pos.y == 1)
             {
-                if (!CheckPiecePresent(pos.x, pos.y + 1) && boardManager.chessBoard[pos.x, pos.y + 1].piece == null)
+                if (!CheckPiecePresent(pos.x, pos.y + 1) && ChessBoardManager.Instance.chessBoard[pos.x, pos.y + 1].piece == null)
                 {
-                    boardManager.chessBoard[pos.x, pos.y + 1].SetPossiblePos();
-                    if (!CheckPiecePresent(pos.x, pos.y + 2) && boardManager.chessBoard[pos.x, pos.y + 2].piece == null)
+                    ChessBoardManager.Instance.chessBoard[pos.x, pos.y + 1].SetPossiblePos();
+                    if (!CheckPiecePresent(pos.x, pos.y + 2) && ChessBoardManager.Instance.chessBoard[pos.x, pos.y + 2].piece == null)
                     {
-                        boardManager.chessBoard[pos.x, pos.y + 2].SetPossiblePos();
+                        ChessBoardManager.Instance.chessBoard[pos.x, pos.y + 2].SetPossiblePos();
                     }
                 }
             }
@@ -157,20 +156,20 @@ public class Piece : MonoBehaviour, IPointerClickHandler
             {
                 if (CheckPosInsideBoard(pos.x, pos.y + 1) && !CheckPiecePresent(pos.x, pos.y + 1))
                 {
-                    boardManager.chessBoard[pos.x, pos.y + 1].SetPossiblePos();
+                    ChessBoardManager.Instance.chessBoard[pos.x, pos.y + 1].SetPossiblePos();
                 }
 
                 
             }
-            if (CheckPosInsideBoard(pos.x + 1, pos.y + 1) && boardManager.chessBoard[pos.x + 1, pos.y + 1].piece &&
-                boardManager.chessBoard[pos.x + 1, pos.y + 1].piece.color != color)
+            if (CheckPosInsideBoard(pos.x + 1, pos.y + 1) && ChessBoardManager.Instance.chessBoard[pos.x + 1, pos.y + 1].piece &&
+                ChessBoardManager.Instance.chessBoard[pos.x + 1, pos.y + 1].piece.color != color)
             {
-                boardManager.chessBoard[pos.x + 1, pos.y + 1].SetPossiblePos();
+                ChessBoardManager.Instance.chessBoard[pos.x + 1, pos.y + 1].SetPossiblePos();
             }
-            if (CheckPosInsideBoard(pos.x - 1, pos.y + 1) && boardManager.chessBoard[pos.x - 1, pos.y + 1].piece &&
-                boardManager.chessBoard[pos.x - 1, pos.y + 1].piece.color != color)
+            if (CheckPosInsideBoard(pos.x - 1, pos.y + 1) && ChessBoardManager.Instance.chessBoard[pos.x - 1, pos.y + 1].piece &&
+                ChessBoardManager.Instance.chessBoard[pos.x - 1, pos.y + 1].piece.color != color)
             {
-                boardManager.chessBoard[pos.x - 1, pos.y + 1].SetPossiblePos();
+                ChessBoardManager.Instance.chessBoard[pos.x - 1, pos.y + 1].SetPossiblePos();
             }
         }
     }
@@ -181,78 +180,78 @@ public class Piece : MonoBehaviour, IPointerClickHandler
         int y = pos.y;
         if (CheckPosInsideBoard(x + 2, y + 1) && !CheckPiecePresent(x + 2, y + 1))
         {
-            boardManager.chessBoard[x + 2, y + 1].SetPossiblePos();
+            ChessBoardManager.Instance.chessBoard[x + 2, y + 1].SetPossiblePos();
         }
         if (CheckPosInsideBoard(x - 2, y + 1) && !CheckPiecePresent(x - 2, y + 1))
         {
-            boardManager.chessBoard[x - 2, y + 1].SetPossiblePos();
+            ChessBoardManager.Instance.chessBoard[x - 2, y + 1].SetPossiblePos();
         }
         if (CheckPosInsideBoard(x - 2, y - 1) && !CheckPiecePresent(x - 2, y - 1))
         {
-            boardManager.chessBoard[x - 2, y - 1].SetPossiblePos();
+            ChessBoardManager.Instance.chessBoard[x - 2, y - 1].SetPossiblePos();
         }
         if (CheckPosInsideBoard(x + 2, y - 1) && !CheckPiecePresent(x + 2, y - 1))
         {
-            boardManager.chessBoard[x + 2, y - 1].SetPossiblePos();
+            ChessBoardManager.Instance.chessBoard[x + 2, y - 1].SetPossiblePos();
         }
         if (CheckPosInsideBoard(x + 1, y + 2) && !CheckPiecePresent(x + 1, y + 2))
         {
-            boardManager.chessBoard[x + 1, y + 2].SetPossiblePos();
+            ChessBoardManager.Instance.chessBoard[x + 1, y + 2].SetPossiblePos();
         }
         if (CheckPosInsideBoard(x - 1, y + 2) && !CheckPiecePresent(x - 1, y + 2))
         {
-            boardManager.chessBoard[x - 1, y + 2].SetPossiblePos();
+            ChessBoardManager.Instance.chessBoard[x - 1, y + 2].SetPossiblePos();
         }
         if (CheckPosInsideBoard(x - 1, y - 2) && !CheckPiecePresent(x - 1, y - 2))
         {
-            boardManager.chessBoard[x - 1, y - 2].SetPossiblePos();
+            ChessBoardManager.Instance.chessBoard[x - 1, y - 2].SetPossiblePos();
         }
         if (CheckPosInsideBoard(x + 1, y - 2) && !CheckPiecePresent(x + 1, y - 2))
         {
-            boardManager.chessBoard[x + 1, y - 2].SetPossiblePos();
+            ChessBoardManager.Instance.chessBoard[x + 1, y - 2].SetPossiblePos();
         }
     }
 
     private bool CheckPosInsideBoard(int x, int y)
     {
-        if (x >= 0 && x < boardManager.sizeChess && y >= 0 && y < boardManager.sizeChess)
+        if (x >= 0 && x < ChessBoardManager.Instance.sizeChess && y >= 0 && y < ChessBoardManager.Instance.sizeChess)
             return (true);
         return (false);
     }
 
     private void TowerCheck()
     {
-        for (int x = pos.x; x >= 0 && (boardManager.chessBoard[x, pos.y].piece == null || x == pos.x); x--)
+        for (int x = pos.x; x >= 0 && (ChessBoardManager.Instance.chessBoard[x, pos.y].piece == null || x == pos.x); x--)
         {
             if (x == pos.x)
                 continue;
             if (CheckPiecePresent(x, pos.y) && x != pos.x)
                 break;
-            boardManager.chessBoard[x, pos.y].SetPossiblePos();
+            ChessBoardManager.Instance.chessBoard[x, pos.y].SetPossiblePos();
         }
-        for (int x = pos.x; x < boardManager.sizeChess && (boardManager.chessBoard[x, pos.y].piece == null || x == pos.x); x++)
+        for (int x = pos.x; x < ChessBoardManager.Instance.sizeChess && (ChessBoardManager.Instance.chessBoard[x, pos.y].piece == null || x == pos.x); x++)
         {
             if (x == pos.x)
                 continue;
             if (CheckPiecePresent(x, pos.y) && x != pos.x)
                 break;
-            boardManager.chessBoard[x, pos.y].SetPossiblePos();
+            ChessBoardManager.Instance.chessBoard[x, pos.y].SetPossiblePos();
         }
-        for (int y = pos.y; y >= 0 && (boardManager.chessBoard[pos.x, y].piece == null || y == pos.y); y--)
+        for (int y = pos.y; y >= 0 && (ChessBoardManager.Instance.chessBoard[pos.x, y].piece == null || y == pos.y); y--)
         {
             if (y == pos.y)
                 continue;
             if (CheckPiecePresent(pos.x, y))
                 break;
-            boardManager.chessBoard[pos.x, y].SetPossiblePos();
+            ChessBoardManager.Instance.chessBoard[pos.x, y].SetPossiblePos();
         }
-        for (int y = pos.y; y < boardManager.sizeChess && (boardManager.chessBoard[pos.x, y].piece == null || y == pos.y); y++)
+        for (int y = pos.y; y < ChessBoardManager.Instance.sizeChess && (ChessBoardManager.Instance.chessBoard[pos.x, y].piece == null || y == pos.y); y++)
         {
             if (y == pos.y)
                 continue;
             if (CheckPiecePresent(pos.x, y))
                 break;
-            boardManager.chessBoard[pos.x, y].SetPossiblePos();
+            ChessBoardManager.Instance.chessBoard[pos.x, y].SetPossiblePos();
         }
     }
 
@@ -260,51 +259,51 @@ public class Piece : MonoBehaviour, IPointerClickHandler
     {
         int x = pos.x;
         int y = pos.y;
-        while (x >= 0 && y >= 0 && (boardManager.chessBoard[x, y].piece == null || (x == pos.x && y == pos.y)))
+        while (x >= 0 && y >= 0 && (ChessBoardManager.Instance.chessBoard[x, y].piece == null || (x == pos.x && y == pos.y)))
         {
             x--;
             y--;
             if (x < 0 || y < 0 || CheckPiecePresent(x, y))
                 break;
-            boardManager.chessBoard[x, y].SetPossiblePos();
+            ChessBoardManager.Instance.chessBoard[x, y].SetPossiblePos();
         }
         x = pos.x;
         y = pos.y;
-        while (x < boardManager.sizeChess && y < boardManager.sizeChess && (boardManager.chessBoard[x, y].piece == null || (x == pos.x && y == pos.y)))
+        while (x < ChessBoardManager.Instance.sizeChess && y < ChessBoardManager.Instance.sizeChess && (ChessBoardManager.Instance.chessBoard[x, y].piece == null || (x == pos.x && y == pos.y)))
         {
             x++;
             y++;
-            if (x >= boardManager.sizeChess || y >= boardManager.sizeChess || CheckPiecePresent(x, y))
+            if (x >= ChessBoardManager.Instance.sizeChess || y >= ChessBoardManager.Instance.sizeChess || CheckPiecePresent(x, y))
                 break;
-            boardManager.chessBoard[x, y].SetPossiblePos();
+            ChessBoardManager.Instance.chessBoard[x, y].SetPossiblePos();
         }
         x = pos.x;
         y = pos.y;
-        while (x < boardManager.sizeChess && y >= 0 && (boardManager.chessBoard[x, y].piece == null || (x == pos.x && y == pos.y)))
+        while (x < ChessBoardManager.Instance.sizeChess && y >= 0 && (ChessBoardManager.Instance.chessBoard[x, y].piece == null || (x == pos.x && y == pos.y)))
         {
             x++;
             y--;
-            if (x >= boardManager.sizeChess || y < 0 || CheckPiecePresent(x, y))
+            if (x >= ChessBoardManager.Instance.sizeChess || y < 0 || CheckPiecePresent(x, y))
                 break;
-            boardManager.chessBoard[x, y].SetPossiblePos();
+            ChessBoardManager.Instance.chessBoard[x, y].SetPossiblePos();
         }
         x = pos.x;
         y = pos.y;
-        while (x >= 0 && y < boardManager.sizeChess && (boardManager.chessBoard[x, y].piece == null || (x == pos.x && y == pos.y)))
+        while (x >= 0 && y < ChessBoardManager.Instance.sizeChess && (ChessBoardManager.Instance.chessBoard[x, y].piece == null || (x == pos.x && y == pos.y)))
         {
             x--;
             y++;
-            if (x < 0 || y >= boardManager.sizeChess || CheckPiecePresent(x, y))
+            if (x < 0 || y >= ChessBoardManager.Instance.sizeChess || CheckPiecePresent(x, y))
                 break;
-            boardManager.chessBoard[x, y].SetPossiblePos();
+            ChessBoardManager.Instance.chessBoard[x, y].SetPossiblePos();
         }
     }
     
     private bool CheckPiecePresent(int x, int y)
     {
-        if (boardManager.chessBoard[x, y].piece)
+        if (ChessBoardManager.Instance.chessBoard[x, y].piece)
         {
-            if (boardManager.chessBoard[x, y].piece.color == color)
+            if (ChessBoardManager.Instance.chessBoard[x, y].piece.color == color)
             {
                 return (true);
             }
@@ -316,7 +315,7 @@ public class Piece : MonoBehaviour, IPointerClickHandler
 
     public void Destroy()
     {
+        ChessBoardManager.Instance.currentPlayer.score += (int) type;
         Destroy(this.gameObject);
-        boardManager.currentPlayer.score += (int) type;
     }
 }

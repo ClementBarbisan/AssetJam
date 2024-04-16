@@ -7,7 +7,6 @@ public class Square : MonoBehaviour
 {
    
     public Piece piece;
-    public ChessBoardManager managerBoard;
     public bool possiblePos;
     public Vector2Int pos;
     [SerializeField] private GameObject _possiblePosHint;

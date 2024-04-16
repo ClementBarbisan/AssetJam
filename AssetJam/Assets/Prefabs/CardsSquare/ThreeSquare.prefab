@@ -99,8 +99,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   color: 0
-  type: 0
-  manager: {fileID: 0}
+  type: 2
+  pieces: []
 --- !u!135 &4406458152573927756
 SphereCollider:
   m_ObjectHideFlags: 0

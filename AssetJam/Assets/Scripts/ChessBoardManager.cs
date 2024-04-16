@@ -1,10 +1,15 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 public class ChessBoardManager : MonoBehaviour
 {
+    public static ChessBoardManager Instance;
     [SerializeField] public Deck deck;
     [FormerlySerializedAs("_playerOne")] public Player playerOne;
     [FormerlySerializedAs("_playerTwo")] public Player playerTwo;
@@ -24,9 +29,38 @@ public class ChessBoardManager : MonoBehaviour
     [SerializeField] private GameObject _queenBlack;
     [SerializeField] private GameObject _kingBlack;
     private float _sizeSquare;
+    [SerializeField] private ChangePlayerText _playerText;
     public Square[,] chessBoard;
+    [HideInInspector]
     public Player currentPlayer;
+    [HideInInspector]
     public Piece currentPiece;
+    [HideInInspector]
+    public bool kingTaken;
+    [SerializeField] private Image _canvasEnd;
+    [SerializeField] private TextMeshProUGUI _textEnd;
+
+    private void Awake()
+    {
+        if (Instance)
+        {
+            Destroy(this);
+            return;
+        }
+        else
+        {
+            Instance = this;
+        }
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -43,13 +77,13 @@ public class ChessBoardManager : MonoBehaviour
                     if (j % 2 != 0)
                     {
                         chessBoard[i, j] = Instantiate(_whiteSquare, (_whiteSquare.transform.right * _sizeSquare * (i - sizeChess / 2)) +
-                             (_whiteSquare.transform.up * _sizeSquare * (j - sizeChess / 2 + 1)), Quaternion.identity, 
+                             (_whiteSquare.transform.up * _sizeSquare * (j - sizeChess / 2 + 1) + transform.position), Quaternion.identity, 
                             this.transform).GetComponent<Square>();
                     }
                     else
                     {
                         chessBoard[i, j] = Instantiate(_blackSquare, (_blackSquare.transform.right * _sizeSquare * (i - sizeChess / 2)) +
-                          (_blackSquare.transform.up * _sizeSquare * (j - sizeChess / 2 + 1)), Quaternion.identity, 
+                          (_blackSquare.transform.up * _sizeSquare * (j - sizeChess / 2 + 1)) + transform.position, Quaternion.identity, 
                             this.transform).GetComponent<Square>();
                     }
                    
@@ -59,18 +93,17 @@ public class ChessBoardManager : MonoBehaviour
                     if (j % 2 == 0)
                     {
                         chessBoard[i, j] = Instantiate(_whiteSquare, (_whiteSquare.transform.right * _sizeSquare * (i - sizeChess / 2)) +
-                          (_whiteSquare.transform.up * _sizeSquare * (j - sizeChess / 2 + 1)), Quaternion.identity, 
+                          (_whiteSquare.transform.up * _sizeSquare * (j - sizeChess / 2 + 1)) + transform.position, Quaternion.identity, 
                             this.transform).GetComponent<Square>();
                     }
                     else
                     {
                         chessBoard[i, j] = Instantiate(_blackSquare, (_blackSquare.transform.right * _sizeSquare * (i - sizeChess / 2)) +
-                           (_blackSquare.transform.up * _sizeSquare * (j - sizeChess / 2 + 1)), Quaternion.identity, 
+                           (_blackSquare.transform.up * _sizeSquare * (j - sizeChess / 2 + 1)) + transform.position, Quaternion.identity, 
                             this.transform).GetComponent<Square>();
                     }
                 }
 
-                chessBoard[i, j].managerBoard = this;
                 chessBoard[i, j].pos = new Vector2Int(i, j);
                 if (j == 0)
                 {
@@ -104,7 +137,6 @@ public class ChessBoardManager : MonoBehaviour
                             Instantiate(_kingWhite, chessBoard[i, j].transform.position -chessBoard[i, j].transform.forward / 10, Quaternion.identity, 
                                 chessBoard[i, j].transform).GetComponent<Piece>();
                     }
-                    chessBoard[i, j].piece.boardManager = this;
                     chessBoard[i, j].piece.pos = new Vector2Int(i, j);
                 }
                 else if (j == 1)
@@ -112,7 +144,6 @@ public class ChessBoardManager : MonoBehaviour
                      chessBoard[i, j].piece =
                          Instantiate(_pawnWhite, chessBoard[i, j].transform.position -chessBoard[i, j].transform.forward / 10, Quaternion.identity, 
                              chessBoard[i, j].transform).GetComponent<Piece>();
-                     chessBoard[i, j].piece.boardManager = this;
                      chessBoard[i, j].piece.pos = new Vector2Int(i, j);
                 }
                 else if (j == sizeChess - 2)
@@ -120,7 +151,6 @@ public class ChessBoardManager : MonoBehaviour
                      chessBoard[i, j].piece =
                          Instantiate(_pawnBlack, chessBoard[i, j].transform.position -chessBoard[i, j].transform.forward / 10, Quaternion.identity, 
                              chessBoard[i, j].transform).GetComponent<Piece>();
-                     chessBoard[i, j].piece.boardManager = this;
                      chessBoard[i, j].piece.pos = new Vector2Int(i, j);
                 }
                 else if (j == sizeChess - 1)
@@ -155,7 +185,6 @@ public class ChessBoardManager : MonoBehaviour
                             Instantiate(_kingBlack, chessBoard[i, j].transform.position -chessBoard[i, j].transform.forward / 10, Quaternion.identity, 
                                 chessBoard[i, j].transform).GetComponent<Piece>();
                     }
-                    chessBoard[i, j].piece.boardManager = this;
                     chessBoard[i, j].piece.pos = new Vector2Int(i, j);
                 }
             }
@@ -189,10 +218,12 @@ public class ChessBoardManager : MonoBehaviour
         deck.HideCards(currentPlayer);
         if (currentPlayer == playerOne)
         {
+            _playerText.SetPlayerTwoText();
             currentPlayer = playerTwo;
         }
         else
         {
+            _playerText.SetPlayerOneText();
             currentPlayer = playerOne;
         }
     }
@@ -213,5 +244,39 @@ public class ChessBoardManager : MonoBehaviour
         }
 
         return (pieces);
+    }
+
+    public void EndGame()
+    {
+        if (currentPlayer == playerTwo)
+        {
+            _playerText.SetPlayerTwoText();
+        }
+        else
+        {
+            _playerText.SetPlayerOneText();
+        }
+        if (playerOne.score > playerTwo.score)
+        {
+            _textEnd.text = "Player One Won with " + playerOne.score + " !";
+        }
+        else if (playerTwo.score > playerOne.score)
+        {
+            _textEnd.text = "Player Two Won " + playerTwo.score + " !";
+        }
+        else if (deck.deck.Count == 0 && !kingTaken)
+        {
+            _textEnd.text = "It's a draw !";
+        }
+        else if (currentPlayer == playerOne)
+        {
+            _textEnd.text = "Player One Won " + playerOne.score + " !";
+        }
+        else
+        {
+            _textEnd.text = "Player Two Won " + playerTwo.score + " !";
+        }
+        _canvasEnd.gameObject.SetActive(true);
+        
     }
 }
