@@ -50,7 +50,8 @@ public class Deck : MonoBehaviour
         _textNbCards.text = "Cards in deck : " + deck.Count;
     }
 
-    public void GetCard(Player player)
+    // slot : index in the hand where the new card goes (the place left by the played/discarded card)
+    public void GetCard(Player player, int slot = -1)
     {
         _textNbCards.text = "Cards in deck : " + deck.Count;
         if (deck.Count == 0)
@@ -63,11 +64,20 @@ public class Deck : MonoBehaviour
             Card card = Instantiate(deck[0], transform.position, Quaternion.identity, player.transform);
             card.transform.localScale *= 2;
             card.transform.localRotation = Quaternion.Euler(0, 0, 90);
-            player.currentCards.Add(card);
+            if (slot >= 0 && slot <= player.currentCards.Count)
+            {
+                player.currentCards.Insert(slot, card);
+            }
+            else
+            {
+                player.currentCards.Add(card);
+            }
             deck.RemoveAt(0);
         }
     }
 
+    // The hand flies back to the deck, then the other player's hand is dealt.
+    // Each card always comes back to its own slot (its index in the hand).
     public void HideCards(Player player)
     {
         StartCoroutine(HideCardsToDeck(player));
@@ -75,33 +85,31 @@ public class Deck : MonoBehaviour
 
     private IEnumerator HideCardsToDeck(Player player)
     {
+        List<Card> cards = new List<Card>(player.currentCards);
         float posApply = 0;
-        Vector3[] pos = new Vector3[player.currentCards.Count];
-        int index = 0;
-        Vector3 startRot = player.currentCards[0].transform.rotation.eulerAngles;
-        foreach (Card card in player.currentCards)
+        Vector3[] startPos = new Vector3[cards.Count];
+        Vector3[] startRot = new Vector3[cards.Count];
+        for (int index = 0; index < cards.Count; index++)
         {
-            pos[index] = card.transform.position;
-            card.DisableCard();
-            index++;
+            startPos[index] = cards[index].transform.position;
+            startRot[index] = cards[index].transform.localRotation.eulerAngles;
+            cards[index].DisableCard();
         }
         yield return new WaitForEndOfFrame();
-        while (posApply <= 1.1f)
+        while (posApply < 1f)
         {
-            index = 0;
-            foreach (Card card in player.currentCards)
-            {
-                card.transform.position = Vector3.Lerp(pos[index], transform.position, posApply);
-                card.transform.localRotation = Quaternion.Euler(Vector3.Lerp(startRot, new Vector3(0, 0, 90), posApply));
-                index++;
-            }
             posApply += Time.deltaTime * speed;
+            for (int index = 0; index < cards.Count; index++)
+            {
+                cards[index].transform.position = Vector3.Lerp(startPos[index], transform.position, posApply);
+                cards[index].transform.localRotation = Quaternion.Euler(Vector3.Lerp(startRot[index], new Vector3(0, 0, 90), posApply));
+            }
             yield return null;
         }
-        foreach (Card card in player.currentCards)
+        foreach (Card card in cards)
         {
             card.gameObject.SetActive(false);
-        } 
+        }
         DisplayCards(ChessBoardManager.Instance.currentPlayer);
     }
 
@@ -115,41 +123,40 @@ public class Deck : MonoBehaviour
         StartCoroutine(DisplayCardsToDeck(currentPlayer));
     }
 
+    // Every card goes from where it is (the deck) to the slot matching its index in the hand.
     private IEnumerator DisplayCardsToDeck(Player currentPlayer)
     {
+        List<Card> cards = new List<Card>(currentPlayer.currentCards);
         float posApply = 0;
-        Vector3[] pos = new Vector3[currentPlayer.currentCards.Count];
-        Vector3[] startPos = new Vector3[currentPlayer.currentCards.Count];
-        int index = 0;
-        Vector3 startRot = currentPlayer.currentCards[0].transform.rotation.eulerAngles;
-        foreach (Card card in currentPlayer.currentCards)
+        Vector3[] pos = new Vector3[cards.Count];
+        Vector3[] startPos = new Vector3[cards.Count];
+        Vector3[] startRot = new Vector3[cards.Count];
+        for (int index = 0; index < cards.Count; index++)
         {
+            Card card = cards[index];
+            float width = card.GetComponent<SpriteRenderer>().size.x * 2;
             pos[index] = currentPlayer.transform.position +
-                         currentPlayer.transform.right * card.GetComponent<SpriteRenderer>().size.x * 2 *
-                         currentPlayer.currentCards.IndexOf(card) - currentPlayer.transform.right *
-                         card.GetComponent<SpriteRenderer>().size.x * 2 * (currentPlayer.currentCards.Count / 2);
+                         currentPlayer.transform.right * width * (index - cards.Count / 2);
             startPos[index] = card.transform.position;
-            index++;
+            startRot[index] = card.transform.localRotation.eulerAngles;
+            card.DisableCard();
         }
 
         yield return new WaitForEndOfFrame();
-        while (posApply <= 1.1f)
+        while (posApply < 1f)
         {
-            index = 0;
-            foreach (Card card in currentPlayer.currentCards)
-            {
-                card.transform.position = Vector3.Lerp(startPos[index], pos[index], posApply);
-                card.transform.localRotation = Quaternion.Euler(Vector3.Lerp(startRot, new Vector3(0, 0, 0), posApply));
-                index++;
-            }
             posApply += Time.deltaTime * speed;
+            for (int index = 0; index < cards.Count; index++)
+            {
+                cards[index].transform.position = Vector3.Lerp(startPos[index], pos[index], posApply);
+                cards[index].transform.localRotation = Quaternion.Euler(Vector3.Lerp(startRot[index], Vector3.zero, posApply));
+            }
             yield return null;
         }
 
-        foreach (Card card in currentPlayer.currentCards)
+        foreach (Card card in cards)
         {
             card.EnableCard();
         }
     }
 }
-    

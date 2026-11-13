@@ -211,11 +211,14 @@ public class ChessBoardManager : MonoBehaviour
     public void SwitchPlayer()
     {
         ResetBoard();
+        // Only the played/discarded card leaves the hand : its replacement takes the same slot,
+        // every other card stays where it was for the player's next turn.
+        int slot = currentPlayer.currentCards.IndexOf(currentPlayer.usedCard);
         currentPlayer.currentCards.Remove(currentPlayer.usedCard);
         Destroy(currentPlayer.usedCard.gameObject);
         currentPlayer.usedCard = null;
-        deck.GetCard(currentPlayer);
-        deck.HideCards(currentPlayer);
+        deck.GetCard(currentPlayer, slot);
+        Player previousPlayer = currentPlayer;
         if (currentPlayer == playerOne)
         {
             _playerText.SetPlayerTwoText();
@@ -226,6 +229,7 @@ public class ChessBoardManager : MonoBehaviour
             _playerText.SetPlayerOneText();
             currentPlayer = playerOne;
         }
+        deck.HideCards(previousPlayer);
     }
 
     public List<Piece> GetPieces(Piece.PieceType type, Piece.ColorPiece color)

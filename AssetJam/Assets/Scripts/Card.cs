@@ -45,7 +45,12 @@ public class Card : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, I
     
     public IEnumerator HideCard(Card card)
     {
-        DisableCard();
+        // Lock the whole hand while the card is discarded, so another card can't be
+        // selected (and destroyed in place of this one) during the animation.
+        foreach (Card other in ChessBoardManager.Instance.currentPlayer.currentCards)
+        {
+            other.DisableCard();
+        }
         float posApply = 0f;
         Vector3 startPos = card.transform.position;
         Vector3 startRot = card.transform.localRotation.eulerAngles;
