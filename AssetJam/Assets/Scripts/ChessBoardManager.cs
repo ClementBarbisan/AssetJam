@@ -260,25 +260,30 @@ public class ChessBoardManager : MonoBehaviour
         {
             _playerText.SetPlayerOneText();
         }
-        if (playerOne.score > playerTwo.score)
+        // Taking the king wins the game, whatever the score.
+        if (kingTaken)
+        {
+            if (currentPlayer == playerOne)
+            {
+                _textEnd.text = "Player One took the king and won with " + playerOne.score + " !";
+            }
+            else
+            {
+                _textEnd.text = "Player Two took the king and won with " + playerTwo.score + " !";
+            }
+        }
+        // No king taken (the deck is empty) : the best score wins.
+        else if (playerOne.score > playerTwo.score)
         {
             _textEnd.text = "Player One Won with " + playerOne.score + " !";
         }
         else if (playerTwo.score > playerOne.score)
         {
-            _textEnd.text = "Player Two Won " + playerTwo.score + " !";
-        }
-        else if (deck.deck.Count == 0 && !kingTaken)
-        {
-            _textEnd.text = "It's a draw !";
-        }
-        else if (currentPlayer == playerOne)
-        {
-            _textEnd.text = "Player One Won " + playerOne.score + " !";
+            _textEnd.text = "Player Two Won with " + playerTwo.score + " !";
         }
         else
         {
-            _textEnd.text = "Player Two Won " + playerTwo.score + " !";
+            _textEnd.text = "It's a draw !";
         }
         _canvasEnd.gameObject.SetActive(true);
         

@@ -26,6 +26,7 @@ public class OutlineSelection : MonoBehaviour, IPointerClickHandler
             _parent.piece.Destroy();
             if (_parent.piece.type == Piece.PieceType.King)
             {
+                ChessBoardManager.Instance.kingTaken = true;
                 ChessBoardManager.Instance.EndGame();
                 return;
             }
