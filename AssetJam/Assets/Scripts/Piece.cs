@@ -221,81 +221,41 @@ public class Piece : MonoBehaviour, IPointerClickHandler
 
     private void TowerCheck()
     {
-        for (int x = pos.x; x >= 0 && (ChessBoardManager.Instance.chessBoard[x, pos.y].piece == null || x == pos.x); x--)
-        {
-            if (x == pos.x)
-                continue;
-            if (CheckPiecePresent(x, pos.y) && x != pos.x)
-                break;
-            ChessBoardManager.Instance.chessBoard[x, pos.y].SetPossiblePos();
-        }
-        for (int x = pos.x; x < ChessBoardManager.Instance.sizeChess && (ChessBoardManager.Instance.chessBoard[x, pos.y].piece == null || x == pos.x); x++)
-        {
-            if (x == pos.x)
-                continue;
-            if (CheckPiecePresent(x, pos.y) && x != pos.x)
-                break;
-            ChessBoardManager.Instance.chessBoard[x, pos.y].SetPossiblePos();
-        }
-        for (int y = pos.y; y >= 0 && (ChessBoardManager.Instance.chessBoard[pos.x, y].piece == null || y == pos.y); y--)
-        {
-            if (y == pos.y)
-                continue;
-            if (CheckPiecePresent(pos.x, y))
-                break;
-            ChessBoardManager.Instance.chessBoard[pos.x, y].SetPossiblePos();
-        }
-        for (int y = pos.y; y < ChessBoardManager.Instance.sizeChess && (ChessBoardManager.Instance.chessBoard[pos.x, y].piece == null || y == pos.y); y++)
-        {
-            if (y == pos.y)
-                continue;
-            if (CheckPiecePresent(pos.x, y))
-                break;
-            ChessBoardManager.Instance.chessBoard[pos.x, y].SetPossiblePos();
-        }
+        CheckLine(-1, 0);
+        CheckLine(1, 0);
+        CheckLine(0, -1);
+        CheckLine(0, 1);
     }
 
     private void FoulCheck()
     {
-        int x = pos.x;
-        int y = pos.y;
-        while (x >= 0 && y >= 0 && (ChessBoardManager.Instance.chessBoard[x, y].piece == null || (x == pos.x && y == pos.y)))
+        CheckLine(-1, -1);
+        CheckLine(1, 1);
+        CheckLine(1, -1);
+        CheckLine(-1, 1);
+    }
+
+    // Walks from the piece in the (dx, dy) direction : every empty square is a possible move,
+    // the first square holding an enemy piece is a possible capture, then the line stops.
+    // A square holding a piece of the same color stops the line without being selectable.
+    private void CheckLine(int dx, int dy)
+    {
+        int x = pos.x + dx;
+        int y = pos.y + dy;
+        while (CheckPosInsideBoard(x, y))
         {
-            x--;
-            y--;
-            if (x < 0 || y < 0 || CheckPiecePresent(x, y))
+            Square square = ChessBoardManager.Instance.chessBoard[x, y];
+            if (square.piece)
+            {
+                if (square.piece.color != color)
+                {
+                    square.SetPossiblePos();
+                }
                 break;
-            ChessBoardManager.Instance.chessBoard[x, y].SetPossiblePos();
-        }
-        x = pos.x;
-        y = pos.y;
-        while (x < ChessBoardManager.Instance.sizeChess && y < ChessBoardManager.Instance.sizeChess && (ChessBoardManager.Instance.chessBoard[x, y].piece == null || (x == pos.x && y == pos.y)))
-        {
-            x++;
-            y++;
-            if (x >= ChessBoardManager.Instance.sizeChess || y >= ChessBoardManager.Instance.sizeChess || CheckPiecePresent(x, y))
-                break;
-            ChessBoardManager.Instance.chessBoard[x, y].SetPossiblePos();
-        }
-        x = pos.x;
-        y = pos.y;
-        while (x < ChessBoardManager.Instance.sizeChess && y >= 0 && (ChessBoardManager.Instance.chessBoard[x, y].piece == null || (x == pos.x && y == pos.y)))
-        {
-            x++;
-            y--;
-            if (x >= ChessBoardManager.Instance.sizeChess || y < 0 || CheckPiecePresent(x, y))
-                break;
-            ChessBoardManager.Instance.chessBoard[x, y].SetPossiblePos();
-        }
-        x = pos.x;
-        y = pos.y;
-        while (x >= 0 && y < ChessBoardManager.Instance.sizeChess && (ChessBoardManager.Instance.chessBoard[x, y].piece == null || (x == pos.x && y == pos.y)))
-        {
-            x--;
-            y++;
-            if (x < 0 || y >= ChessBoardManager.Instance.sizeChess || CheckPiecePresent(x, y))
-                break;
-            ChessBoardManager.Instance.chessBoard[x, y].SetPossiblePos();
+            }
+            square.SetPossiblePos();
+            x += dx;
+            y += dy;
         }
     }
     
